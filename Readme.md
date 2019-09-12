@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Валерия Малышева](https://up.htmlacademy.ru/javascript/18/user/871409).
-* Наставник: `Неизвестно`.
+* Наставник: [Константин Цуканов](https://htmlacademy.ru/profile/id769011).
 
 ---
 
