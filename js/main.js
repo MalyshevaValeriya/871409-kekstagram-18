@@ -15,7 +15,7 @@ var getRandomInterval = function (min, max) {
 };
 
 var getRandomElement = function (elements) {
-  return elements[getRandomInterval(0, elements.length - 1)];;
+  return elements[getRandomInterval(0, elements.length - 1)];
 };
 
 var getRandomMessage = function (messages) {
@@ -38,8 +38,9 @@ var getRandomComments = function () {
       message: getRandomMessage(MESSAGES),
       name: getRandomElement(NAMES)
     };
-    comments.push(usersComment)
-  };
+
+    comments.push(usersComment);
+  }
 
   return comments;
 };
