@@ -18,6 +18,7 @@ var SCALE_COUNT = 25;
 var SCALE_MAX = 100;
 var SCALE_MIN = 25;
 var ESC_KEYCODE = 27;
+var ENTER_KEYCODE = 13;
 var HASHTAG_FIRST_SYMBOL = 'хэш-тег должен начинаться с символа # (решётка)';
 var HASHTAG_LENGTH = 'хеш-тег не может состоять только из одной решётки';
 var HASHTAG_SPACE = 'между хэш-тегами должен быть пробел';
@@ -93,10 +94,10 @@ var renderPhoto = function (photo) {
   return photoElement;
 };
 
+var photoAlbum = document.querySelector('.pictures.container');
 var renderPhotos = function (photos) {
-  var photoAlbum = document.querySelector('.pictures.container');
-  var fragment = document.createDocumentFragment();
 
+  var fragment = document.createDocumentFragment();
   for (var i = 0; i < PHOTO_COUNT; i++) {
     fragment.appendChild(renderPhoto(photos[i]));
   }
@@ -142,6 +143,37 @@ var removeChildren = function (parent) {
 };
 
 removeChildren(renderComments);
+
+/* Личный проект: доверяй, но проверяй  */
+
+
+var onClickBigPhoto = function (evt) {
+  var target = evt.target;
+  if (evt.type === 'keydown' && evt.keyCode !== ENTER_KEYCODE) {
+    return;
+  }
+  if (evt.type === 'keydown') {
+    target = evt.target.firstElementChild;
+  }
+
+  for (var i = 0; i < photoAlbum.children.length; i++) {
+    if (target === photoAlbum.children[i].firstElementChild) {
+      openBigPicture(photos[i - 2]);
+    }
+  }
+};
+
+var inputComment = document.querySelector('.social__footer-text');
+
+inputComment.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    evt.stopPropagation();
+  }
+});
+
+photoAlbum.addEventListener('click', onClickBigPhoto);
+photoAlbum.addEventListener('keydown', onClickBigPhoto);
+
 
 var renderComment = function (comment) {
   var similarCommentTemplate = document.querySelector('#big-picture__comment').content.querySelector('.social__comment');
