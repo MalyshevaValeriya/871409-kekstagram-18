@@ -26,6 +26,12 @@ var HASHTAG_UNIQUENESS = 'один и тот же хэш-тег не может 
 var HASHTAG_MAX_QUANTITY = 'нельзя указать больше пяти хэш-тегов';
 var HASHTAG_MAX_LENGTH = 'максимальная длина одного хэш-тега 20 символов, включая решётку';
 
+var escEvent = function (evt, action) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    action();
+  }
+};
+
 var getRandomInterval = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
@@ -83,13 +89,14 @@ var createPhotos = function () {
   return photos;
 };
 
-var renderPhoto = function (photo) {
+var renderPhoto = function (photo, i) {
   var similarPhotoTemplate = document.querySelector('#picture').content.querySelector('.picture');
   var photoElement = similarPhotoTemplate.cloneNode(true);
 
   photoElement.querySelector('.picture__img').src = photo.url;
   photoElement.querySelector('.picture__likes').textContent = photo.likes;
   photoElement.querySelector('.picture__comments').textContent = photo.comments.length;
+  photoElement.dataset.index = i;
 
   return photoElement;
 };
@@ -99,7 +106,7 @@ var renderPhotos = function (photos) {
 
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < PHOTO_COUNT; i++) {
-    fragment.appendChild(renderPhoto(photos[i]));
+    fragment.appendChild(renderPhoto(photos[i], i));
   }
 
   photoAlbum.appendChild(fragment);
@@ -114,9 +121,7 @@ bigPictureClose.addEventListener('click', function () {
 });
 
 document.addEventListener('keydown', function (evt) {
-  if (evt.keyCode === ESC_KEYCODE) {
-    closeBigPicture();
-  }
+  escEvent(evt, closeBigPicture);
 });
 
 var photos = createPhotos();
@@ -145,21 +150,19 @@ var removeChildren = function (parent) {
 removeChildren(renderComments);
 
 /* Личный проект: доверяй, но проверяй  */
-
+var onKeydownBigPhoto = function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    var photoElement = evt.target;
+    var index = photoElement.dataset.index;
+    openBigPicture(photos[index]);
+  }
+};
 
 var onClickBigPhoto = function (evt) {
-  var target = evt.target;
-  if (evt.type === 'keydown' && evt.keyCode !== ENTER_KEYCODE) {
-    return;
-  }
-  if (evt.type === 'keydown') {
-    target = evt.target.firstElementChild;
-  }
-
-  for (var i = 0; i < photoAlbum.children.length; i++) {
-    if (target === photoAlbum.children[i].firstElementChild) {
-      openBigPicture(photos[i - 2]);
-    }
+  var photoElement = evt.target.parentNode;
+  if (photoElement.classList.contains('picture')) {
+    var index = photoElement.dataset.index;
+    openBigPicture(photos[index]);
   }
 };
 
@@ -172,7 +175,7 @@ inputComment.addEventListener('keydown', function (evt) {
 });
 
 photoAlbum.addEventListener('click', onClickBigPhoto);
-photoAlbum.addEventListener('keydown', onClickBigPhoto);
+photoAlbum.addEventListener('keydown', onKeydownBigPhoto);
 
 
 var renderComment = function (comment) {
@@ -225,19 +228,11 @@ var scaleBiggerButton = document.querySelector('.scale__control--bigger');
 var scaleValue = document.querySelector('.scale__control--value');
 var imgPreview = document.querySelector('.img-upload__preview');
 var effectsList = document.querySelector('.effects__list');
-var noneEffect = effectsList.querySelector('#effect-none');
-var chromeEffect = effectsList.querySelector('#effect-chrome');
-var sepiaEffect = effectsList.querySelector('#effect-sepia');
-var marvinEffect = effectsList.querySelector('#effect-marvin');
-var phobosEffect = effectsList.querySelector('#effect-phobos');
-var heatEffect = effectsList.querySelector('#effect-heat');
 var effectLevel = document.querySelector('.effect-level');
 var inputHashtags = document.querySelector('.text__hashtags');
 
 var onPopupEscPress = function (evt) {
-  if (evt.keyCode === ESC_KEYCODE) {
-    closeUpload();
-  }
+  escEvent(evt, closeUpload);
 };
 
 var closeUpload = function () {
@@ -258,11 +253,15 @@ var showEffectLine = function () {
   effectLevel.classList.remove('hidden');
 };
 
-uploadLabel.addEventListener('change', function () {
-  openUpload();
+var resetPhoto = function () {
   scaleValue.value = '100%';
   imgPreview.style.transform = '';
   imgPreview.style.filter = '';
+};
+
+uploadLabel.addEventListener('change', function () {
+  openUpload();
+  resetPhoto();
   hideEffectLine();
 });
 
@@ -271,9 +270,7 @@ uploadClose.addEventListener('click', function () {
 });
 
 uploadClose.addEventListener('keydown', function (evt) {
-  if (evt.keyCode === ESC_KEYCODE) {
-    closeUpload();
-  }
+  escEvent(evt, closeUpload);
 });
 
 var smallerButtonHundler = function () {
@@ -292,82 +289,139 @@ var biggerButtonHundler = function () {
   }
 };
 
+var onSelectEffect = function (evt) {
+  var filtersName = evt.target.value;
+
+  switch (filtersName) {
+    case 'none':
+      makeNoneEffect(imgPreview);
+      break;
+    case 'chrome':
+      makeChromeEffect(imgPreview);
+      break;
+    case 'sepia':
+      makeSepiaEffect(imgPreview);
+      break;
+    case 'marvin':
+      makeMarvinEffect(imgPreview);
+      break;
+    case 'phobos':
+      makePhobosEffect(imgPreview);
+      break;
+    case 'heat':
+      makeHeatEffect(imgPreview);
+      break;
+  }
+};
+
+// eslint-disable-next-line no-unused-vars
+var makeNoneEffect = function (target, value) {
+  target.style.filter = '';
+  hideEffectLine();
+};
+
+// eslint-disable-next-line no-unused-vars
+var makeChromeEffect = function (target, value) {
+  target.style.filter = 'grayscale(1)';
+  showEffectLine();
+};
+
+// eslint-disable-next-line no-unused-vars
+var makeSepiaEffect = function (target, value) {
+  target.style.filter = 'sepia(1)';
+  showEffectLine();
+};
+// eslint-disable-next-line no-unused-vars
+var makeMarvinEffect = function (target, value) {
+  target.style.filter = 'invert(100%)';
+  showEffectLine();
+};
+// eslint-disable-next-line no-unused-vars
+var makePhobosEffect = function (target, value) {
+  target.style.filter = 'blur(3px)';
+  showEffectLine();
+};
+// eslint-disable-next-line no-unused-vars
+var makeHeatEffect = function (target, value) {
+  target.style.filter = 'brightness(3)';
+  showEffectLine();
+};
+
+effectsList.addEventListener('change', onSelectEffect);
+
 scaleSmallerButton.addEventListener('click', smallerButtonHundler);
 scaleBiggerButton.addEventListener('click', biggerButtonHundler);
 
-noneEffect.addEventListener('click', function () {
-  imgPreview.style.filter = '';
-  hideEffectLine();
-});
+var checkHashtagFirstSymbol = function (hashtag, errorMessageArray) {
+  if (hashtag[0] !== '#') {
+    if (!errorMessageArray.includes(HASHTAG_FIRST_SYMBOL)) {
+      errorMessageArray.push(HASHTAG_FIRST_SYMBOL);
+    }
+  }
+};
 
-chromeEffect.addEventListener('click', function () {
-  imgPreview.style.filter = 'grayscale(1)';
-  showEffectLine();
-});
+var checkHashtagLength = function (hashtag, errorMessageArray) {
+  if (hashtag === '#') {
+    if (!errorMessageArray.includes(HASHTAG_LENGTH)) {
+      errorMessageArray.push(HASHTAG_LENGTH);
+    }
+  }
+};
 
-sepiaEffect.addEventListener('click', function () {
-  imgPreview.style.filter = 'sepia(1)';
-  showEffectLine();
-});
+var checkHashtagSpace = function (hashtag, errorMessageArray) {
+  for (var y = 1; y < hashtag.length; y++) {
+    if (hashtag[y] === '#') {
+      if (!errorMessageArray.includes(HASHTAG_SPACE)) {
+        errorMessageArray.push(HASHTAG_SPACE);
+      }
+    }
+  }
+};
 
-marvinEffect.addEventListener('click', function () {
-  imgPreview.style.filter = 'invert(100%)';
-  showEffectLine();
-});
+var checkHashtagMaxQuantity = function (hashtagArray, errorMessageArray) {
+  if (hashtagArray.length > 5) {
+    if (!errorMessageArray.includes(HASHTAG_MAX_QUANTITY)) {
+      errorMessageArray.push(HASHTAG_MAX_QUANTITY);
+    }
+  }
+};
 
-phobosEffect.addEventListener('click', function () {
-  imgPreview.style.filter = 'blur(3px)';
-  showEffectLine();
-});
+var checkHashtagUniqueness = function (hashtagArray, i, errorMessageArray) {
+  if (!checkOriginality(hashtagArray, i)) {
+    if (!errorMessageArray.includes(HASHTAG_UNIQUENESS)) {
+      errorMessageArray.push(HASHTAG_UNIQUENESS);
+    }
+  }
+};
 
-heatEffect.addEventListener('click', function () {
-  imgPreview.style.filter = 'brightness(3)';
-  showEffectLine();
-});
+var checkMaxHashtagLength = function (hashtag, errorMessageArray) {
+  if (hashtag.length > MAX_HASHTAG_LENGTH) {
+    if (!errorMessageArray.includes(HASHTAG_MAX_LENGTH)) {
+      errorMessageArray.push(HASHTAG_MAX_LENGTH);
+    }
+  }
+};
+
+var preparationString = function (str) {
+  var tagString = str.trim();
+  tagString = tagString.replace(/\s+/g, ' ');
+  return tagString;
+};
 
 var validationHashtags = function (evt) {
-  var hashtagArray = evt.target.value.split(' ');
+  var tagString = preparationString(evt.target.value);
+  var hashtagArray = tagString.split(' ');
   var errorMessageArray = [];
 
   for (var i = 0; i < hashtagArray.length; i++) {
     var hashtag = hashtagArray[i];
-    if (hashtag[0] !== '#') {
-      if (!errorMessageArray.includes(HASHTAG_FIRST_SYMBOL)) {
-        errorMessageArray.push(HASHTAG_FIRST_SYMBOL);
-      }
-    }
 
-    if (hashtag === '#') {
-      if (!errorMessageArray.includes(HASHTAG_LENGTH)) {
-        errorMessageArray.push(HASHTAG_LENGTH);
-      }
-    }
-
-    for (var y = 1; y < hashtagArray[i].length; y++) {
-      if (hashtag[y] === '#') {
-        if (!errorMessageArray.includes(HASHTAG_SPACE)) {
-          errorMessageArray.push(HASHTAG_SPACE);
-        }
-      }
-    }
-
-    if (hashtagArray.length > 5) {
-      if (!errorMessageArray.includes(HASHTAG_MAX_QUANTITY)) {
-        errorMessageArray.push(HASHTAG_MAX_QUANTITY);
-      }
-    }
-
-    if (!checkOriginality(hashtagArray, i)) {
-      if (!errorMessageArray.includes(HASHTAG_UNIQUENESS)) {
-        errorMessageArray.push(HASHTAG_UNIQUENESS);
-      }
-    }
-
-    if (hashtag.length > MAX_HASHTAG_LENGTH) {
-      if (!errorMessageArray.includes(HASHTAG_MAX_LENGTH)) {
-        errorMessageArray.push(HASHTAG_MAX_LENGTH);
-      }
-    }
+    checkHashtagFirstSymbol(hashtag, errorMessageArray);
+    checkHashtagLength(hashtag, errorMessageArray);
+    checkHashtagSpace(hashtag, errorMessageArray);
+    checkHashtagMaxQuantity(hashtagArray, errorMessageArray);
+    checkHashtagUniqueness(hashtagArray, i, errorMessageArray);
+    checkMaxHashtagLength(hashtag, errorMessageArray);
   }
   inputHashtags.setCustomValidity(errorMessageArray.join('; '));
 };
