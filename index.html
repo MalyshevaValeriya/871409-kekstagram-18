@@ -171,7 +171,7 @@
           <!-- Форма для отправки комментария -->
           <div class="social__footer">
             <img class="social__picture" src="img/avatar-6.svg" alt="Аватар комментатора фотографии" width="35" height="35">
-            <input type="text" class="social__footer-text" placeholder="Ваш комментарий...">
+            <input type="text" class="social__footer-text" placeholder="Ваш комментарий..." maxlength="140">
             <button type="button" class="social__footer-btn" name="button">Отправить</button>
           </div>
         </div>
@@ -234,6 +234,21 @@
   <!-- Экран загрузки изображения -->
   <template id="messages">
     <div class="img-upload__message  img-upload__message--loading">Загружаем...</div>
+  </template>
+
+  <!-- Шаблон комментария под фото-->
+  <template id="big-picture__comment">
+    <div class="social__comment-count">5 из <span class="comments-count">125</span> комментариев</div>
+        <ul class="social__comments">
+          <li class="social__comment">
+            <img class="social__picture" src="" alt="" width="35" height="35">
+            <p class="social__text"></p>
+          </li>
+          <li class="social__comment">
+            <img class="social__picture" src="" alt="" width="35" height="35">
+              <p class="social__text"></p>
+          </li>
+        </ul>
   </template>
 
   <script src="js/main.js"></script>
