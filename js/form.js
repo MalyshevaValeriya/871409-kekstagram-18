@@ -18,10 +18,14 @@
   var scaleSmallerButton = document.querySelector('.scale__control--smaller');
   var scaleBiggerButton = document.querySelector('.scale__control--bigger');
   var scaleValue = document.querySelector('.scale__control--value');
+  var imgContainer = document.querySelector('.img-upload__preview');
   var imgPreview = document.querySelector('.img-upload__preview').firstElementChild;
   var effectsList = document.querySelector('.effects__list');
   var effectLevel = document.querySelector('.effect-level');
   var inputHashtags = document.querySelector('.text__hashtags');
+  var effectPin = document.querySelector('.effect-level__pin');
+  var effectLevelLine = document.querySelector('.effect-level__depth');
+  var effectLine = document.querySelector('.effect-level__line');
 
   var onPopupEscPress = function (evt) {
     window.util.isEscEvent(evt, closeUpload);
@@ -47,7 +51,7 @@
 
   var resetPhoto = function () {
     scaleValue.value = '100%';
-    imgPreview.style.transform = '';
+    imgContainer.style.transform = '';
     imgPreview.style.filter = '';
   };
 
@@ -69,7 +73,7 @@
     var numValue = parseInt(scaleValue.value, 10);
     if (numValue - SCALE_COUNT >= SCALE_MIN) {
       scaleValue.value = '' + numValue - SCALE_COUNT + '%';
-      imgPreview.style.transform = 'scale(' + (numValue - SCALE_COUNT) / 100 + ')';
+      imgContainer.style.transform = 'scale(' + (numValue - SCALE_COUNT) / 100 + ')';
     }
   };
 
@@ -77,65 +81,71 @@
     var numValue = parseInt(scaleValue.value, 10);
     if (numValue + SCALE_COUNT <= SCALE_MAX) {
       scaleValue.value = numValue + SCALE_COUNT + '%';
-      imgPreview.style.transform = 'scale(' + (numValue + SCALE_COUNT) / 100 + ')';
+      imgContainer.style.transform = 'scale(' + (numValue + SCALE_COUNT) / 100 + ')';
     }
   };
 
   var onSelectEffect = function (evt) {
     var filtersName = evt.target.value;
-
     switch (filtersName) {
       case 'none':
         makeNoneEffect(imgPreview);
+        imgPreview.classList = '';
         break;
       case 'chrome':
-        makeChromeEffect(imgPreview);
+        imgPreview.classList = '';
+        imgPreview.classList.add('effects__preview--chrome');
+        makeChromeEffect(imgPreview, 1);
         break;
       case 'sepia':
-        makeSepiaEffect(imgPreview);
+        imgPreview.classList = '';
+        imgPreview.classList.add('effects__preview--sepia');
+        makeSepiaEffect(imgPreview, 1);
         break;
       case 'marvin':
-        makeMarvinEffect(imgPreview);
+        imgPreview.classList = '';
+        imgPreview.classList.add('effects__preview--marvin');
+        makeMarvinEffect(imgPreview, 1);
         break;
       case 'phobos':
-        makePhobosEffect(imgPreview);
+        imgPreview.classList = '';
+        imgPreview.classList.add('effects__preview--phobos');
+        makePhobosEffect(imgPreview, 1);
         break;
       case 'heat':
-        makeHeatEffect(imgPreview);
+        imgPreview.classList = '';
+        imgPreview.classList.add('effects__preview--heat');
+        makeHeatEffect(imgPreview, 1);
         break;
     }
+    effectPin.style.left = effectLine.offsetWidth + 'px';
+    effectLevelLine.style.width = effectLine.offsetWidth + 'px';
   };
 
-  // eslint-disable-next-line no-unused-vars
-  var makeNoneEffect = function (target, value) {
+  var makeNoneEffect = function (target) {
     target.style.filter = '';
     hideEffectLine();
   };
 
-  // eslint-disable-next-line no-unused-vars
   var makeChromeEffect = function (target, value) {
-    target.style.filter = 'grayscale(1)';
+    target.style.filter = 'grayscale(' + value + ')';
     showEffectLine();
   };
 
-  // eslint-disable-next-line no-unused-vars
   var makeSepiaEffect = function (target, value) {
-    target.style.filter = 'sepia(1)';
+    target.style.filter = 'sepia(' + value + ')';
     showEffectLine();
   };
-  // eslint-disable-next-line no-unused-vars
   var makeMarvinEffect = function (target, value) {
-    target.style.filter = 'invert(100%)';
+    target.style.filter = 'invert(' + value * 100 + '%)';
     showEffectLine();
   };
-  // eslint-disable-next-line no-unused-vars
   var makePhobosEffect = function (target, value) {
-    target.style.filter = 'blur(3px)';
+    target.style.filter = 'blur(' + value * 30 + 'px)';
     showEffectLine();
   };
-  // eslint-disable-next-line no-unused-vars
   var makeHeatEffect = function (target, value) {
-    target.style.filter = 'brightness(3)';
+    target.style.filter = 'brightness(' + 1 + value * 2 + ')';
     showEffectLine();
   };
 
@@ -239,4 +249,52 @@
       evt.stopPropagation();
     }
   });
+
+  effectPin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+
+    var startCoords = evt.clientX;
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      var shift = startCoords - moveEvt.clientX;
+
+      startCoords = moveEvt.clientX;
+      if (effectPin.offsetLeft - shift >= 0 && effectPin.offsetLeft - shift <= effectLine.offsetWidth) {
+        effectPin.style.left = (effectPin.offsetLeft - shift) + 'px';
+        effectLevelLine.style.width = (effectPin.offsetLeft) + 'px';
+      }
+
+
+      switch (imgPreview.className) {
+        case 'effects__preview--chrome':
+          makeChromeEffect(imgPreview, effectPin.offsetLeft / effectLine.offsetWidth);
+          break;
+        case 'effects__preview--sepia':
+          makeSepiaEffect(imgPreview, effectPin.offsetLeft / effectLine.offsetWidth);
+          break;
+        case 'effects__preview--marvin':
+          makeMarvinEffect(imgPreview, effectPin.offsetLeft / effectLine.offsetWidth);
+          break;
+        case 'effects__preview--phobos':
+          makePhobosEffect(imgPreview, effectPin.offsetLeft / effectLine.offsetWidth);
+          break;
+        case 'effects__preview--heat':
+          makeHeatEffect(imgPreview, effectPin.offsetLeft / effectLine.offsetWidth);
+          break;
+      }
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+
 })();
