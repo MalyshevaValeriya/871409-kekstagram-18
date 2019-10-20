@@ -18,7 +18,6 @@
   var scaleSmallerButton = document.querySelector('.scale__control--smaller');
   var scaleBiggerButton = document.querySelector('.scale__control--bigger');
   var scaleValue = document.querySelector('.scale__control--value');
-  var imgContainer = document.querySelector('.img-upload__preview');
   var imgPreview = document.querySelector('.img-upload__preview').firstElementChild;
   var effectsList = document.querySelector('.effects__list');
   var effectLevel = document.querySelector('.effect-level');
@@ -26,6 +25,8 @@
   var effectPin = document.querySelector('.effect-level__pin');
   var effectLevelLine = document.querySelector('.effect-level__depth');
   var effectLine = document.querySelector('.effect-level__line');
+  var curretFilter;
+
 
   var onPopupEscPress = function (evt) {
     window.util.isEscEvent(evt, closeUpload);
@@ -51,7 +52,7 @@
 
   var resetPhoto = function () {
     scaleValue.value = '100%';
-    imgContainer.style.transform = '';
+    imgPreview.style.transform = '';
     imgPreview.style.filter = '';
   };
 
@@ -73,7 +74,7 @@
     var numValue = parseInt(scaleValue.value, 10);
     if (numValue - SCALE_COUNT >= SCALE_MIN) {
       scaleValue.value = '' + numValue - SCALE_COUNT + '%';
-      imgContainer.style.transform = 'scale(' + (numValue - SCALE_COUNT) / 100 + ')';
+      imgPreview.style.transform = 'scale(' + (numValue - SCALE_COUNT) / 100 + ')';
     }
   };
 
@@ -81,43 +82,19 @@
     var numValue = parseInt(scaleValue.value, 10);
     if (numValue + SCALE_COUNT <= SCALE_MAX) {
       scaleValue.value = numValue + SCALE_COUNT + '%';
-      imgContainer.style.transform = 'scale(' + (numValue + SCALE_COUNT) / 100 + ')';
+      imgPreview.style.transform = 'scale(' + (numValue + SCALE_COUNT) / 100 + ')';
     }
   };
 
   var onSelectEffect = function (evt) {
     var filtersName = evt.target.value;
-    switch (filtersName) {
-      case 'none':
-        makeNoneEffect(imgPreview);
-        imgPreview.classList = '';
-        break;
-      case 'chrome':
-        imgPreview.classList = '';
-        imgPreview.classList.add('effects__preview--chrome');
-        makeChromeEffect(imgPreview, 1);
-        break;
-      case 'sepia':
-        imgPreview.classList = '';
-        imgPreview.classList.add('effects__preview--sepia');
-        makeSepiaEffect(imgPreview, 1);
-        break;
-      case 'marvin':
-        imgPreview.classList = '';
-        imgPreview.classList.add('effects__preview--marvin');
-        makeMarvinEffect(imgPreview, 1);
-        break;
-      case 'phobos':
-        imgPreview.classList = '';
-        imgPreview.classList.add('effects__preview--phobos');
-        makePhobosEffect(imgPreview, 1);
-        break;
-      case 'heat':
-        imgPreview.classList = '';
-        imgPreview.classList.add('effects__preview--heat');
-        makeHeatEffect(imgPreview, 1);
-        break;
+    imgPreview.classList.remove('effects__preview--' + curretFilter);
+    var makeEffect = effects[filtersName];
+    makeEffect(imgPreview, effectPin.offsetLeft / effectLine.offsetWidth);
+    if (filtersName !== 'none') {
+      imgPreview.classList.add('effects__preview--' + evt.target.value);
     }
+    curretFilter = evt.target.value;
     effectPin.style.left = effectLine.offsetWidth + 'px';
     effectLevelLine.style.width = effectLine.offsetWidth + 'px';
   };
@@ -145,8 +122,17 @@
     showEffectLine();
   };
   var makeHeatEffect = function (target, value) {
-    target.style.filter = 'brightness(' + 1 + value * 2 + ')';
+    target.style.filter = 'brightness(' + (1 + value * 2) + ')';
     showEffectLine();
+  };
+
+  var effects = {
+    chrome: makeChromeEffect,
+    sepia: makeSepiaEffect,
+    marvin: makeMarvinEffect,
+    phobos: makePhobosEffect,
+    heat: makeHeatEffect,
+    none: makeNoneEffect
   };
 
   effectsList.addEventListener('change', onSelectEffect);
@@ -265,25 +251,8 @@
         effectPin.style.left = (effectPin.offsetLeft - shift) + 'px';
         effectLevelLine.style.width = (effectPin.offsetLeft) + 'px';
       }
-
-
-      switch (imgPreview.className) {
-        case 'effects__preview--chrome':
-          makeChromeEffect(imgPreview, effectPin.offsetLeft / effectLine.offsetWidth);
-          break;
-        case 'effects__preview--sepia':
-          makeSepiaEffect(imgPreview, effectPin.offsetLeft / effectLine.offsetWidth);
-          break;
-        case 'effects__preview--marvin':
-          makeMarvinEffect(imgPreview, effectPin.offsetLeft / effectLine.offsetWidth);
-          break;
-        case 'effects__preview--phobos':
-          makePhobosEffect(imgPreview, effectPin.offsetLeft / effectLine.offsetWidth);
-          break;
-        case 'effects__preview--heat':
-          makeHeatEffect(imgPreview, effectPin.offsetLeft / effectLine.offsetWidth);
-          break;
-      }
+      var makeEffect = effects[curretFilter];
+      makeEffect(imgPreview, effectPin.offsetLeft / effectLine.offsetWidth);
     };
 
     var onMouseUp = function (upEvt) {
