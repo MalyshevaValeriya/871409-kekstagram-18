@@ -22,6 +22,11 @@
   var effectsList = document.querySelector('.effects__list');
   var effectLevel = document.querySelector('.effect-level');
   var inputHashtags = document.querySelector('.text__hashtags');
+  var effectPin = document.querySelector('.effect-level__pin');
+  var effectLevelLine = document.querySelector('.effect-level__depth');
+  var effectLine = document.querySelector('.effect-level__line');
+  var curretFilter;
+
 
   var onPopupEscPress = function (evt) {
     window.util.isEscEvent(evt, closeUpload);
@@ -83,60 +88,51 @@
 
   var onSelectEffect = function (evt) {
     var filtersName = evt.target.value;
-
-    switch (filtersName) {
-      case 'none':
-        makeNoneEffect(imgPreview);
-        break;
-      case 'chrome':
-        makeChromeEffect(imgPreview);
-        break;
-      case 'sepia':
-        makeSepiaEffect(imgPreview);
-        break;
-      case 'marvin':
-        makeMarvinEffect(imgPreview);
-        break;
-      case 'phobos':
-        makePhobosEffect(imgPreview);
-        break;
-      case 'heat':
-        makeHeatEffect(imgPreview);
-        break;
+    imgPreview.classList.remove('effects__preview--' + curretFilter);
+    var makeEffect = effects[filtersName];
+    makeEffect(imgPreview, effectPin.offsetLeft / effectLine.offsetWidth);
+    if (filtersName !== 'none') {
+      imgPreview.classList.add('effects__preview--' + evt.target.value);
     }
+    curretFilter = evt.target.value;
+    effectPin.style.left = effectLine.offsetWidth + 'px';
+    effectLevelLine.style.width = effectLine.offsetWidth + 'px';
   };
 
-  // eslint-disable-next-line no-unused-vars
-  var makeNoneEffect = function (target, value) {
+  var makeNoneEffect = function (target) {
     target.style.filter = '';
     hideEffectLine();
   };
 
-  // eslint-disable-next-line no-unused-vars
   var makeChromeEffect = function (target, value) {
-    target.style.filter = 'grayscale(1)';
+    target.style.filter = 'grayscale(' + value + ')';
     showEffectLine();
   };
 
-  // eslint-disable-next-line no-unused-vars
   var makeSepiaEffect = function (target, value) {
-    target.style.filter = 'sepia(1)';
+    target.style.filter = 'sepia(' + value + ')';
     showEffectLine();
   };
-  // eslint-disable-next-line no-unused-vars
   var makeMarvinEffect = function (target, value) {
-    target.style.filter = 'invert(100%)';
+    target.style.filter = 'invert(' + value * 100 + '%)';
     showEffectLine();
   };
-  // eslint-disable-next-line no-unused-vars
   var makePhobosEffect = function (target, value) {
-    target.style.filter = 'blur(3px)';
+    target.style.filter = 'blur(' + value * 30 + 'px)';
     showEffectLine();
   };
-  // eslint-disable-next-line no-unused-vars
   var makeHeatEffect = function (target, value) {
-    target.style.filter = 'brightness(3)';
+    target.style.filter = 'brightness(' + (1 + value * 2) + ')';
     showEffectLine();
+  };
+
+  var effects = {
+    chrome: makeChromeEffect,
+    sepia: makeSepiaEffect,
+    marvin: makeMarvinEffect,
+    phobos: makePhobosEffect,
+    heat: makeHeatEffect,
+    none: makeNoneEffect
   };
 
   effectsList.addEventListener('change', onSelectEffect);
@@ -239,4 +235,35 @@
       evt.stopPropagation();
     }
   });
+
+  effectPin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+
+    var startCoords = evt.clientX;
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      var shift = startCoords - moveEvt.clientX;
+
+      startCoords = moveEvt.clientX;
+      if (effectPin.offsetLeft - shift >= 0 && effectPin.offsetLeft - shift <= effectLine.offsetWidth) {
+        effectPin.style.left = (effectPin.offsetLeft - shift) + 'px';
+        effectLevelLine.style.width = (effectPin.offsetLeft) + 'px';
+      }
+      var makeEffect = effects[curretFilter];
+      makeEffect(imgPreview, effectPin.offsetLeft / effectLine.offsetWidth);
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+
 })();
