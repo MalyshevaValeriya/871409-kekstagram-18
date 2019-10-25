@@ -90,7 +90,7 @@
     var filtersName = evt.target.value;
     imgPreview.classList.remove('effects__preview--' + curretFilter);
     var makeEffect = effects[filtersName];
-    makeEffect(imgPreview, effectPin.offsetLeft / effectLine.offsetWidth);
+    makeEffect(imgPreview, 1);
     if (filtersName !== 'none') {
       imgPreview.classList.add('effects__preview--' + evt.target.value);
     }
