@@ -5,8 +5,6 @@
   var bigPicture = document.querySelector('.big-picture');
   var bigPictureClose = document.querySelector('.big-picture__cancel');
   var ENTER_KEYCODE = 13;
-
-  var photos = window.data.photos;
   var closeBigPicture = function () {
     bigPicture.classList.add('hidden');
   };
@@ -46,7 +44,7 @@
     if (evt.keyCode === ENTER_KEYCODE) {
       var photoElement = evt.target;
       var index = photoElement.dataset.index;
-      openBigPicture(photos[index]);
+      openBigPicture(window.picture.photos[index]);
     }
   };
 
@@ -54,7 +52,7 @@
     var photoElement = evt.target.parentNode;
     if (photoElement.classList.contains('picture')) {
       var index = photoElement.dataset.index;
-      openBigPicture(photos[index]);
+      openBigPicture(window.picture.photos[index]);
     }
   };
 

@@ -12,21 +12,36 @@
     return photoElement;
   };
 
+  window.picture.photoAlbum = document.querySelector('.pictures.container');
 
-  var photoAlbum = document.querySelector('.pictures.container');
   var renderPhotos = function (photos) {
-
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < window.data.PHOTO_COUNT; i++) {
+    for (var i = 0; i < photos.length; i++) {
       fragment.appendChild(renderPhoto(photos[i], i));
     }
 
-    photoAlbum.appendChild(fragment);
+    window.picture.photoAlbum.appendChild(fragment);
   };
 
-  window.picture = {
-    renderPhotos: renderPhotos,
-    photoAlbum: photoAlbum
+  var errorHandler = function (message) {
+    var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+    var error = errorTemplate.cloneNode(true);
+
+    error.querySelector('.error__title').textContent = message;
+
+
+    document.querySelector('main').appendChild(error);
   };
+
+  var onError = function (message) {
+    errorHandler(message);
+  };
+
+  var onSuccess = function (data) {
+    renderPhotos(data);
+    window.picture.photos = data;
+  };
+
+  window.backend.load(onSuccess, onError);
 })();
 
