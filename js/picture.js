@@ -46,7 +46,8 @@
 
   window.picture = {
     errorHandler: errorHandler,
-    photoAlbum: photoAlbum
+    photoAlbum: photoAlbum,
+    renderPhotos: renderPhotos
   };
 })();
 
