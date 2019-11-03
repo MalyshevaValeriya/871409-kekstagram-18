@@ -12,6 +12,7 @@
   var HASHTAG_MAX_QUANTITY = 'нельзя указать больше пяти хэш-тегов';
   var HASHTAG_MAX_LENGTH = 'максимальная длина одного хэш-тега 20 символов, включая решётку';
   var uploadForm = document.querySelector('.img-upload__form');
+  var uploadFormSubmitButton = uploadForm.querySelector('.img-upload__submit');
   var uploadLabel = uploadForm.querySelector('#upload-file');
   var uploadImage = uploadForm.querySelector('.img-upload__overlay');
   var uploadClose = document.querySelector('.img-upload__cancel');
@@ -53,10 +54,11 @@
   var resetPhoto = function () {
     scaleValue.value = '100%';
     imgPreview.style.transform = '';
-    imgPreview.style.filter = '';
+    imgPreview.style.filter = 'none';
   };
 
   uploadLabel.addEventListener('change', function () {
+    uploadFormSubmitButton.disabled = false;
     openUpload();
     resetPhoto();
     hideEffectLine();
@@ -265,5 +267,60 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
+  var successTemplate = document.querySelector('#success').content.querySelector('.success');
+
+  var onSuccess = function () {
+    var success = successTemplate.cloneNode(true);
+
+    document.querySelector('main').appendChild(success);
+    var closeSuccess = function () {
+      if (success) {
+        success.remove();
+      }
+      document.removeEventListener('click', closeSuccess);
+      document.removeEventListener('keydown', succesKedownHundler);
+    };
+
+    document.addEventListener('click', closeSuccess);
+
+    var succesKedownHundler = function (evt) {
+      window.util.isEscEvent(evt, closeSuccess);
+    };
+
+    document.addEventListener('keydown', succesKedownHundler);
+  };
+
+  var onError = function (message) {
+    window.picture.errorHandler(message);
+    uploadImage.classList.add('hidden');
+    var closeError = function () {
+      if (document.querySelector('.error')) {
+        document.querySelector('.error').remove();
+      }
+      document.removeEventListener('click', closeError);
+      document.removeEventListener('keydown', errorKedownHundler);
+    };
+
+    document.addEventListener('click', closeError);
+
+    var errorKedownHundler = function (evt) {
+      window.util.isEscEvent(evt, closeError);
+    };
+    document.addEventListener('keydown', errorKedownHundler);
+
+
+  };
+
+  uploadForm.addEventListener('submit', function (evt) {
+
+    window.backend.save(new FormData(uploadForm), function () {
+      uploadImage.classList.add('hidden');
+      onSuccess();
+    }, onError);
+    uploadLabel.value = '';
+    evt.preventDefault();
+    uploadFormSubmitButton.disabled = true;
+  });
+
 
 })();

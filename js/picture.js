@@ -12,7 +12,7 @@
     return photoElement;
   };
 
-  window.picture.photoAlbum = document.querySelector('.pictures.container');
+  var photoAlbum = document.querySelector('.pictures.container');
 
   var renderPhotos = function (photos) {
     var fragment = document.createDocumentFragment();
@@ -20,7 +20,7 @@
       fragment.appendChild(renderPhoto(photos[i], i));
     }
 
-    window.picture.photoAlbum.appendChild(fragment);
+    photoAlbum.appendChild(fragment);
   };
 
   var errorHandler = function (message) {
@@ -43,5 +43,11 @@
   };
 
   window.backend.load(onSuccess, onError);
+
+  window.picture = {
+    errorHandler: errorHandler,
+    photoAlbum: photoAlbum,
+    renderPhotos: renderPhotos
+  };
 })();
 
