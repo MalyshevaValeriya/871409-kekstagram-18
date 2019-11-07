@@ -5,6 +5,7 @@
   var SCALE_MIN = 25;
   var MAX_HASHTAG_LENGTH = 20;
   var MAX_HASHTAG_COUNT = 5;
+  var MAX_COMMENT_LENGTH = 140;
   var HASHTAG_FIRST_SYMBOL = 'хэш-тег должен начинаться с символа # (решётка)';
   var HASHTAG_LENGTH = 'хеш-тег не может состоять только из одной решётки';
   var HASHTAG_SPACE = 'между хэш-тегами должен быть пробел';
@@ -23,6 +24,7 @@
   var effectsList = document.querySelector('.effects__list');
   var effectLevel = document.querySelector('.effect-level');
   var inputHashtags = document.querySelector('.text__hashtags');
+  var textDescription = document.querySelector('.text__description');
   var effectPin = document.querySelector('.effect-level__pin');
   var effectLevelLine = document.querySelector('.effect-level__depth');
   var effectLine = document.querySelector('.effect-level__line');
@@ -55,6 +57,9 @@
     scaleValue.value = '100%';
     imgPreview.style.transform = '';
     imgPreview.style.filter = 'none';
+    inputHashtags.value = '';
+    textDescription.value = '';
+
   };
 
   uploadLabel.addEventListener('change', function () {
@@ -214,9 +219,13 @@
       checkMaxHashtagLength(hashtag, errorMessageArray);
     }
     inputHashtags.setCustomValidity(errorMessageArray.join('; '));
+
   };
 
+
   inputHashtags.addEventListener('input', validationHashtags);
+
+  textDescription.maxLength = MAX_COMMENT_LENGTH;
 
   var checkOriginality = function (checkedArray, checkedElementPosition) {
     var hashtagArr = [];

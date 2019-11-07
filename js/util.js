@@ -63,7 +63,6 @@
     isEnterEvent: isEnterEvent,
     getRandomElement: getRandomElement,
     getRandomInterval: getRandomInterval,
-    escKeyCode: ESC_KEYCODE,
     debounce: debounce,
     randomizeArray: randomizeArray,
     removeChildren: removeChildren
