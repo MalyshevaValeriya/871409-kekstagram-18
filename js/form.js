@@ -219,7 +219,6 @@
       checkMaxHashtagLength(hashtag, errorMessageArray);
     }
     inputHashtags.setCustomValidity(errorMessageArray.join('; '));
-
   };
 
 
@@ -241,11 +240,9 @@
     return true;
   };
 
-  inputHashtags.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.util.escKeyCode) {
-      evt.stopPropagation();
-    }
-  });
+  inputHashtags.addEventListener('keydown', window.util.stopPropagation);
+  textDescription.addEventListener('keydown', window.util.stopPropagation);
+
 
   effectPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
@@ -330,6 +327,13 @@
     evt.preventDefault();
     uploadFormSubmitButton.disabled = true;
   });
-
-
+  uploadFormSubmitButton.addEventListener('click', function () {
+    if (inputHashtags.setCustomValidity) {
+      inputHashtags.classList.add('error__border');
+      setTimeout(function () {
+        inputHashtags.classList.remove('error__border');
+      }, 400);
+    }
+  }
+  );
 })();

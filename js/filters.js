@@ -33,10 +33,10 @@
         'filter-random': window.util.randomizeArray(IMG_RANDOM_COUNT, window.picture.photos),
         'filter-discussed': getDiscussedImg()
       };
-      window.picture.randomphotos = filters['filter-random'];
-      window.picture.discussedphotos = filters['filter-discussed'];
       window.util.removeChildren(photoAlbum);
-      window.picture.renderPhotos(filters[evt.target.id]);
+      var currentArray = filters[evt.target.id];
+      window.picture.currentArray = currentArray;
+      window.picture.renderPhotos(currentArray);
       filterButton(evt.target);
     }
   });

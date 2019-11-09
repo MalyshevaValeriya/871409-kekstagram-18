@@ -4,6 +4,7 @@
   var ESC_KEYCODE = 27;
   var ENTER_KEYCODE = 13;
   var DEBOUNCE_INTERVAL = 500;
+
   var isEscEvent = function (evt, action) {
     if (evt.keyCode === ESC_KEYCODE) {
       action();
@@ -58,6 +59,12 @@
     }
   };
 
+  var stopPropagation = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      evt.stopPropagation();
+    }
+  };
+
   window.util = {
     isEscEvent: isEscEvent,
     isEnterEvent: isEnterEvent,
@@ -65,7 +72,8 @@
     getRandomInterval: getRandomInterval,
     debounce: debounce,
     randomizeArray: randomizeArray,
-    removeChildren: removeChildren
+    removeChildren: removeChildren,
+    stopPropagation: stopPropagation
   };
 })();
 

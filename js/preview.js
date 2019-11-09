@@ -7,7 +7,6 @@
   var bigPictureClose = document.querySelector('.big-picture__cancel');
   var ENTER_KEYCODE = 13;
   var moreButton = document.querySelector('.comments-loader');
-  var filtersForm = document.body.querySelector('.img-filters__form');
   var closeBigPicture = function () {
     bigPicture.classList.add('hidden');
   };
@@ -40,45 +39,26 @@
     }
   };
 
-  var photosArraySelect = function () {
-    var photoArrayDict = {
-      'filter-popular': window.picture.photos,
-      'filter-random': window.picture.randomphotos,
-      'filter-discussed': window.picture.discussedphotos
-    };
-    var id;
-    for (var i = 0; i < filtersForm.children.length; i++) {
-      if (filtersForm.children[i].classList.contains('img-filters__button--active')) {
-        id = filtersForm.children[i].id;
-      }
-    }
-    return photoArrayDict[id];
-  };
-
   var onKeydownBigPhoto = function (evt) {
     if (evt.keyCode === ENTER_KEYCODE) {
       var photoElement = evt.target;
       var index = photoElement.dataset.index;
-      openBigPicture(photosArraySelect()[index]);
+      openBigPicture(window.picture.currentArray[index]);
     }
   };
 
   var onClickBigPhoto = function (evt) {
-    photosArraySelect();
     var photoElement = evt.target.parentNode;
     if (photoElement.classList.contains('picture')) {
       var index = photoElement.dataset.index;
-      openBigPicture(photosArraySelect()[index]);
+      openBigPicture(window.picture.currentArray[index]);
     }
   };
 
   var inputComment = document.querySelector('.social__footer-text');
 
-  inputComment.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.util.escKeyCode) {
-      evt.stopPropagation();
-    }
-  });
+  inputComment.addEventListener('keydown', window.util.stopPropagation);
+
 
   window.picture.photoAlbum.addEventListener('click', onClickBigPhoto);
   window.picture.photoAlbum.addEventListener('keydown', onKeydownBigPhoto);
