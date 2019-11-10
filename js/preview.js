@@ -80,40 +80,23 @@
   var remainingComments = [];
   var moreCommentsHundler = function () {
     var fragment = document.createDocumentFragment();
+    var count = remainingComments.length <= COMMENTS_LIMIT ? remainingComments.length : COMMENTS_LIMIT;
+    for (var i = 0; i < count; i++) {
+      fragment.appendChild(renderComment(remainingComments[i]));
+    }
+    renderComments.appendChild(fragment);
     if (remainingComments.length <= COMMENTS_LIMIT) {
-      for (var i = 0; i < remainingComments.length; i++) {
-        fragment.appendChild(renderComment(remainingComments[i]));
-      }
-      renderComments.appendChild(fragment);
       moreButton.classList.add('visually-hidden');
       moreButton.removeEventListener('click', moreCommentsHundler);
     } else {
-      for (var y = 0; y < COMMENTS_LIMIT; y++) {
-        fragment.appendChild(renderComment(remainingComments[y]));
-      }
-      renderComments.appendChild(fragment);
       remainingComments = remainingComments.slice(COMMENTS_LIMIT);
     }
-
   };
+
   var showComments = function (photo) {
     moreButton.classList.remove('visually-hidden');
-    var fragment = document.createDocumentFragment();
-    if (photo.comments.length <= COMMENTS_LIMIT) {
-      for (var i = 0; i < photo.comments.length; i++) {
-        fragment.appendChild(renderComment(photo.comments[i]));
-      }
-      moreButton.classList.add('visually-hidden');
-    } else {
-
-      for (var y = 0; y < COMMENTS_LIMIT; y++) {
-        fragment.appendChild(renderComment(photo.comments[y]));
-      }
-      remainingComments = photo.comments.slice(COMMENTS_LIMIT);
-
-    }
-
-    renderComments.appendChild(fragment);
+    remainingComments = photo.comments;
+    moreCommentsHundler();
     moreButton.addEventListener('click', moreCommentsHundler);
   };
 

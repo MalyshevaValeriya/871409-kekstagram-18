@@ -328,7 +328,7 @@
     uploadFormSubmitButton.disabled = true;
   });
   uploadFormSubmitButton.addEventListener('click', function () {
-    if (inputHashtags.setCustomValidity) {
+    if (inputHashtags.validationMessage) {
       inputHashtags.classList.add('error__border');
       setTimeout(function () {
         inputHashtags.classList.remove('error__border');
