@@ -34,7 +34,9 @@
         'filter-discussed': getDiscussedImg()
       };
       window.util.removeChildren(photoAlbum);
-      window.picture.renderPhotos(filters[evt.target.id]);
+      var currentArray = filters[evt.target.id];
+      window.picture.currentArray = currentArray;
+      window.picture.renderPhotos(currentArray);
       filterButton(evt.target);
     }
   });

@@ -40,6 +40,7 @@
   var onSuccess = function (data) {
     renderPhotos(data);
     window.picture.photos = data;
+    window.picture.currentArray = data;
   };
 
   window.backend.load(onSuccess, onError);

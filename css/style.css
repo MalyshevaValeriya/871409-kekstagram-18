@@ -1447,3 +1447,7 @@ main {
     grid-row: 1 / span 3;
   }
 }
+
+.error__border {
+  outline: 5px solid red;
+}
