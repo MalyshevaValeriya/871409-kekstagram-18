@@ -3,7 +3,6 @@
   var IMG_RANDOM_COUNT = 10;
   var imgFilters = document.querySelector('.img-filters');
   var filtersForm = document.querySelector('.img-filters__form');
-  var photoAlbum = window.picture.photoAlbum;
   var filterPopular = filtersForm.querySelector('#filter-popular');
   var filterRandom = filtersForm.querySelector('#filter-random');
   var filterDiscussed = filtersForm.querySelector('#filter-discussed');
@@ -18,30 +17,38 @@
     element.classList.add('img-filters__button--active');
   };
 
-  var getDiscussedImg = function () {
-    var photosCopy = window.picture.photos.slice();
+  var getDiscussedPhotos = function (photos) {
+    var photosCopy = photos.slice();
     photosCopy.sort(function (a, b) {
       return b.comments.length - a.comments.length;
     });
     return photosCopy;
   };
 
-  var onFilterClick = window.util.debounce(function (evt) {
-    if (window.picture.photos) {
-      var filters = {
-        'filter-popular': window.picture.photos,
-        'filter-random': window.util.randomizeArray(IMG_RANDOM_COUNT, window.picture.photos),
-        'filter-discussed': getDiscussedImg()
-      };
-      window.util.removeChildren(photoAlbum);
-      var currentArray = filters[evt.target.id];
-      window.picture.currentArray = currentArray;
-      window.picture.renderPhotos(currentArray);
-      filterButton(evt.target);
+  var getRandomPhotos = function (photos) {
+    return window.util.randomizeArray(IMG_RANDOM_COUNT, photos);
+  };
+
+  var getPhotos = function (photos) {
+    return photos;
+  };
+
+  var filterClickHandler = window.util.debounce(function (evt) {
+    if (!window.picture.photos) {
+      return;
     }
+    var filters = {
+      'filter-popular': getPhotos,
+      'filter-random': getRandomPhotos,
+      'filter-discussed': getDiscussedPhotos
+    };
+    var currentArray = filters[evt.target.id](window.picture.photos);
+    window.picture.renderPhotos(currentArray);
+    filterButton(evt.target);
   });
-  filterRandom.addEventListener('click', onFilterClick);
-  filterPopular.addEventListener('click', onFilterClick);
-  filterDiscussed.addEventListener('click', onFilterClick);
+
+  filterRandom.addEventListener('click', filterClickHandler);
+  filterPopular.addEventListener('click', filterClickHandler);
+  filterDiscussed.addEventListener('click', filterClickHandler);
 })();
 

@@ -5,7 +5,6 @@
   var COMMENTS_LIMIT = 5;
   var bigPicture = document.querySelector('.big-picture');
   var bigPictureClose = document.querySelector('.big-picture__cancel');
-  var ENTER_KEYCODE = 13;
   var moreButton = document.querySelector('.comments-loader');
   var closeBigPicture = function () {
     bigPicture.classList.add('hidden');
@@ -40,18 +39,18 @@
   };
 
   var onKeydownBigPhoto = function (evt) {
-    if (evt.keyCode === ENTER_KEYCODE) {
+    window.util.isEnterEvent(evt, function () {
       var photoElement = evt.target;
       var index = photoElement.dataset.index;
-      openBigPicture(window.picture.currentArray[index]);
-    }
+      openBigPicture(window.picture.currentPhotos[index]);
+    });
   };
 
   var onClickBigPhoto = function (evt) {
     var photoElement = evt.target.parentNode;
     if (photoElement.classList.contains('picture')) {
       var index = photoElement.dataset.index;
-      openBigPicture(window.picture.currentArray[index]);
+      openBigPicture(window.picture.currentPhotos[index]);
     }
   };
 
@@ -78,7 +77,7 @@
   };
 
   var remainingComments = [];
-  var moreCommentsHundler = function () {
+  var moreCommentsHandler = function () {
     var fragment = document.createDocumentFragment();
     var count = remainingComments.length <= COMMENTS_LIMIT ? remainingComments.length : COMMENTS_LIMIT;
     for (var i = 0; i < count; i++) {
@@ -87,7 +86,7 @@
     renderComments.appendChild(fragment);
     if (remainingComments.length <= COMMENTS_LIMIT) {
       moreButton.classList.add('visually-hidden');
-      moreButton.removeEventListener('click', moreCommentsHundler);
+      moreButton.removeEventListener('click', moreCommentsHandler);
     } else {
       remainingComments = remainingComments.slice(COMMENTS_LIMIT);
     }
@@ -96,8 +95,8 @@
   var showComments = function (photo) {
     moreButton.classList.remove('visually-hidden');
     remainingComments = photo.comments;
-    moreCommentsHundler();
-    moreButton.addEventListener('click', moreCommentsHundler);
+    moreCommentsHandler();
+    moreButton.addEventListener('click', moreCommentsHandler);
   };
 
   var showPhoto = function (photo) {
