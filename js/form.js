@@ -1,25 +1,33 @@
 'use strict';
 (function () {
-  var SCALE_COUNT = 25;
-  var SCALE_MAX = 100;
-  var SCALE_MIN = 25;
   var MAX_HASHTAG_LENGTH = 20;
   var MAX_HASHTAG_COUNT = 5;
   var MAX_COMMENT_LENGTH = 140;
-  var HASHTAG_FIRST_SYMBOL = 'хэш-тег должен начинаться с символа # (решётка)';
-  var HASHTAG_LENGTH = 'хеш-тег не может состоять только из одной решётки';
-  var HASHTAG_SPACE = 'между хэш-тегами должен быть пробел';
-  var HASHTAG_UNIQUENESS = 'один и тот же хэш-тег не может быть использован дважды';
-  var HASHTAG_MAX_QUANTITY = 'нельзя указать больше пяти хэш-тегов';
-  var HASHTAG_MAX_LENGTH = 'максимальная длина одного хэш-тега 20 символов, включая решётку';
+
+  var Scale = {
+    COUNT: 25,
+    MAX: 100,
+    MIN: 25
+  };
+
+  var HashtagErrors = {
+    FIRST_SYMBOL: 'хэш-тег должен начинаться с символа # (решётка)',
+    LENGTH: 'хеш-тег не может состоять только из одной решётки',
+    SPACE: 'между хэш-тегами должен быть пробел',
+    UNIQUENESS: 'один и тот же хэш-тег не может быть использован дважды',
+    MAX_QUANTITY: 'нельзя указать больше пяти хэш-тегов',
+    MAX_LENGTH: 'максимальная длина одного хэш-тега 20 символов, включая решётку'
+  };
+
   var uploadForm = document.querySelector('.img-upload__form');
   var uploadFormSubmitButton = uploadForm.querySelector('.img-upload__submit');
   var uploadLabel = uploadForm.querySelector('#upload-file');
   var uploadImage = uploadForm.querySelector('.img-upload__overlay');
   var uploadClose = document.querySelector('.img-upload__cancel');
-  var scaleSmallerButton = document.querySelector('.scale__control--smaller');
-  var scaleBiggerButton = document.querySelector('.scale__control--bigger');
-  var scaleValue = document.querySelector('.scale__control--value');
+  var imgScale = document.querySelector('.img-upload__scale');
+  var scaleSmallerButton = imgScale.querySelector('.scale__control--smaller');
+  var scaleBiggerButton = imgScale.querySelector('.scale__control--bigger');
+  var scaleValue = imgScale.querySelector('.scale__control--value');
   var imgPreview = document.querySelector('.img-upload__preview').firstElementChild;
   var effectsList = document.querySelector('.effects__list');
   var effectLevel = document.querySelector('.effect-level');
@@ -31,18 +39,18 @@
   var curretFilter;
 
 
-  var onPopupEscPress = function (evt) {
+  var popupEscPressHandler = function (evt) {
     window.util.isEscEvent(evt, closeUpload);
   };
 
   var closeUpload = function () {
     uploadImage.classList.add('hidden');
-    document.removeEventListener('keydown', onPopupEscPress);
+    document.removeEventListener('keydown', popupEscPressHandler);
   };
 
   var openUpload = function () {
     uploadImage.classList.remove('hidden');
-    document.addEventListener('keydown', onPopupEscPress);
+    document.addEventListener('keydown', popupEscPressHandler);
   };
 
   var hideEffectLine = function () {
@@ -77,19 +85,19 @@
     window.util.isEscEvent(evt, closeUpload);
   });
 
-  var smallerButtonHundler = function () {
+  var smallerButtonHandler = function () {
     var numValue = parseInt(scaleValue.value, 10);
-    if (numValue - SCALE_COUNT >= SCALE_MIN) {
-      scaleValue.value = '' + numValue - SCALE_COUNT + '%';
-      imgPreview.style.transform = 'scale(' + (numValue - SCALE_COUNT) / 100 + ')';
+    if (numValue - Scale.COUNT >= Scale.MIN) {
+      scaleValue.value = '' + numValue - Scale.COUNT + '%';
+      imgPreview.style.transform = 'scale(' + (numValue - Scale.COUNT) / 100 + ')';
     }
   };
 
-  var biggerButtonHundler = function () {
+  var biggerButtonHandler = function () {
     var numValue = parseInt(scaleValue.value, 10);
-    if (numValue + SCALE_COUNT <= SCALE_MAX) {
-      scaleValue.value = numValue + SCALE_COUNT + '%';
-      imgPreview.style.transform = 'scale(' + (numValue + SCALE_COUNT) / 100 + ')';
+    if (numValue + Scale.COUNT <= Scale.MAX) {
+      scaleValue.value = numValue + Scale.COUNT + '%';
+      imgPreview.style.transform = 'scale(' + (numValue + Scale.COUNT) / 100 + ')';
     }
   };
 
@@ -144,21 +152,21 @@
 
   effectsList.addEventListener('change', onSelectEffect);
 
-  scaleSmallerButton.addEventListener('click', smallerButtonHundler);
-  scaleBiggerButton.addEventListener('click', biggerButtonHundler);
+  scaleSmallerButton.addEventListener('click', smallerButtonHandler);
+  scaleBiggerButton.addEventListener('click', biggerButtonHandler);
 
   var checkHashtagFirstSymbol = function (hashtag, errorMessageArray) {
     if (hashtag[0] !== '#') {
-      if (!errorMessageArray.includes(HASHTAG_FIRST_SYMBOL)) {
-        errorMessageArray.push(HASHTAG_FIRST_SYMBOL);
+      if (!errorMessageArray.includes(HashtagErrors.FIRST_SYMBOL)) {
+        errorMessageArray.push(HashtagErrors.FIRST_SYMBOL);
       }
     }
   };
 
   var checkHashtagLength = function (hashtag, errorMessageArray) {
     if (hashtag === '#') {
-      if (!errorMessageArray.includes(HASHTAG_LENGTH)) {
-        errorMessageArray.push(HASHTAG_LENGTH);
+      if (!errorMessageArray.includes(HashtagErrors.LENGTH)) {
+        errorMessageArray.push(HashtagErrors.LENGTH);
       }
     }
   };
@@ -166,33 +174,34 @@
   var checkHashtagSpace = function (hashtag, errorMessageArray) {
     for (var y = 1; y < hashtag.length; y++) {
       if (hashtag[y] === '#') {
-        if (!errorMessageArray.includes(HASHTAG_SPACE)) {
-          errorMessageArray.push(HASHTAG_SPACE);
+        if (!errorMessageArray.includes(HashtagErrors.SPACE)) {
+          errorMessageArray.push(HashtagErrors.SPACE);
         }
       }
     }
+
   };
 
   var checkHashtagMaxQuantity = function (hashtagArray, errorMessageArray) {
     if (hashtagArray.length > MAX_HASHTAG_COUNT) {
-      if (!errorMessageArray.includes(HASHTAG_MAX_QUANTITY)) {
-        errorMessageArray.push(HASHTAG_MAX_QUANTITY);
+      if (!errorMessageArray.includes(HashtagErrors.MAX_QUANTITY)) {
+        errorMessageArray.push(HashtagErrors.MAX_QUANTITY);
       }
     }
   };
 
   var checkHashtagUniqueness = function (hashtagArray, i, errorMessageArray) {
     if (!checkOriginality(hashtagArray, i)) {
-      if (!errorMessageArray.includes(HASHTAG_UNIQUENESS)) {
-        errorMessageArray.push(HASHTAG_UNIQUENESS);
+      if (!errorMessageArray.includes(HashtagErrors.UNIQUENESS)) {
+        errorMessageArray.push(HashtagErrors.UNIQUENESS);
       }
     }
   };
 
   var checkMaxHashtagLength = function (hashtag, errorMessageArray) {
     if (hashtag.length > MAX_HASHTAG_LENGTH) {
-      if (!errorMessageArray.includes(HASHTAG_MAX_LENGTH)) {
-        errorMessageArray.push(HASHTAG_MAX_LENGTH);
+      if (!errorMessageArray.includes(HashtagErrors.MAX_LENGTH)) {
+        errorMessageArray.push(HashtagErrors.MAX_LENGTH);
       }
     }
   };
@@ -208,16 +217,16 @@
     var hashtagArray = tagString.split(' ');
     var errorMessageArray = [];
 
-    for (var i = 0; i < hashtagArray.length; i++) {
-      var hashtag = hashtagArray[i];
-
-      checkHashtagFirstSymbol(hashtag, errorMessageArray);
-      checkHashtagLength(hashtag, errorMessageArray);
-      checkHashtagSpace(hashtag, errorMessageArray);
+    hashtagArray.forEach(function (item, i) {
+      checkHashtagFirstSymbol(item, errorMessageArray);
+      checkHashtagLength(item, errorMessageArray);
+      checkHashtagSpace(item, errorMessageArray);
       checkHashtagMaxQuantity(hashtagArray, errorMessageArray);
       checkHashtagUniqueness(hashtagArray, i, errorMessageArray);
-      checkMaxHashtagLength(hashtag, errorMessageArray);
-    }
+      checkMaxHashtagLength(item, errorMessageArray);
+    });
+
+
     inputHashtags.setCustomValidity(errorMessageArray.join('; '));
   };
 
@@ -228,9 +237,9 @@
 
   var checkOriginality = function (checkedArray, checkedElementPosition) {
     var hashtagArr = [];
-    for (var i = 0; i < checkedArray.length; i++) {
-      hashtagArr[i] = checkedArray[i].toLowerCase();
-    }
+    checkedArray.forEach(function (item, i) {
+      hashtagArr[i] = item.toLowerCase();
+    });
     var checkedElement = hashtagArr[checkedElementPosition];
     hashtagArr.splice(checkedElementPosition, 1);
 
@@ -284,16 +293,16 @@
         success.remove();
       }
       document.removeEventListener('click', closeSuccess);
-      document.removeEventListener('keydown', succesKedownHundler);
+      document.removeEventListener('keydown', succesKeydownHandler);
     };
 
     document.addEventListener('click', closeSuccess);
 
-    var succesKedownHundler = function (evt) {
+    var succesKeydownHandler = function (evt) {
       window.util.isEscEvent(evt, closeSuccess);
     };
 
-    document.addEventListener('keydown', succesKedownHundler);
+    document.addEventListener('keydown', succesKeydownHandler);
   };
 
   var onError = function (message) {
@@ -304,21 +313,27 @@
         document.querySelector('.error').remove();
       }
       document.removeEventListener('click', closeError);
-      document.removeEventListener('keydown', errorKedownHundler);
+      document.removeEventListener('keydown', errorKeydownHandler);
     };
 
     document.addEventListener('click', closeError);
 
-    var errorKedownHundler = function (evt) {
+    var errorKeydownHandler = function (evt) {
       window.util.isEscEvent(evt, closeError);
     };
-    document.addEventListener('keydown', errorKedownHundler);
+    document.addEventListener('keydown', errorKeydownHandler);
 
 
   };
 
-  uploadForm.addEventListener('submit', function (evt) {
+  var validationMessageReaction = function () {
+    inputHashtags.classList.add('error__border');
+    setTimeout(function () {
+      inputHashtags.classList.remove('error__border');
+    }, 400);
+  };
 
+  var formSending = function (evt) {
     window.backend.save(new FormData(uploadForm), function () {
       uploadImage.classList.add('hidden');
       onSuccess();
@@ -326,14 +341,14 @@
     uploadLabel.value = '';
     evt.preventDefault();
     uploadFormSubmitButton.disabled = true;
-  });
-  uploadFormSubmitButton.addEventListener('click', function () {
+  };
+
+  uploadFormSubmitButton.addEventListener('click', function (evt) {
     if (inputHashtags.validationMessage) {
-      inputHashtags.classList.add('error__border');
-      setTimeout(function () {
-        inputHashtags.classList.remove('error__border');
-      }, 400);
+      validationMessageReaction();
+      return;
     }
-  }
-  );
+    formSending(evt);
+  });
+
 })();

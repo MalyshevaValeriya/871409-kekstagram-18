@@ -1,5 +1,6 @@
 'use strict';
 (function () {
+  var photoAlbum = document.querySelector('.pictures.container');
   var renderPhoto = function (photo, i) {
     var similarPhotoTemplate = document.querySelector('#picture').content.querySelector('.picture');
     var photoElement = similarPhotoTemplate.cloneNode(true);
@@ -12,14 +13,14 @@
     return photoElement;
   };
 
-  var photoAlbum = document.querySelector('.pictures.container');
-
   var renderPhotos = function (photos) {
+    window.picture.currentPhotos = photos;
+    window.util.removeChildren(photoAlbum);
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < photos.length; i++) {
-      fragment.appendChild(renderPhoto(photos[i], i));
-    }
 
+    photos.forEach(function (item, i) {
+      fragment.appendChild(renderPhoto(item, i));
+    });
     photoAlbum.appendChild(fragment);
   };
 

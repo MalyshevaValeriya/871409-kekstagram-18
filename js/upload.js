@@ -1,7 +1,6 @@
 'use strict';
 (function () {
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
-  var EFFECT_PREVIEW_COUNT = 6;
   var fileChooser = document.querySelector('#upload-file');
   var preview = document.querySelector('.img-upload__preview img');
   var effectPreview = document.querySelectorAll('.effects__preview');
@@ -18,10 +17,10 @@
       var reader = new FileReader();
       reader.addEventListener('load', function () {
         preview.src = reader.result;
-
-        for (var i = 0; i < EFFECT_PREVIEW_COUNT; i++) {
-          effectPreview[i].style.backgroundImage = 'url(' + reader.result + ')';
-        }
+        var setBackgroundImage = function (item) {
+          item.style.backgroundImage = 'url(' + reader.result + ')';
+        };
+        effectPreview.forEach(setBackgroundImage);
       });
       reader.readAsDataURL(file);
     }
