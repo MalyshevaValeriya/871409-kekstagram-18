@@ -17,10 +17,6 @@
     }
   };
 
-  var getRandomElement = function (elements) {
-    return elements[getRandomInterval(0, elements.length - 1)];
-  };
-
   var getRandomInterval = function (min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
@@ -68,7 +64,6 @@
   window.util = {
     isEscEvent: isEscEvent,
     isEnterEvent: isEnterEvent,
-    getRandomElement: getRandomElement,
     getRandomInterval: getRandomInterval,
     debounce: debounce,
     randomizeArray: randomizeArray,

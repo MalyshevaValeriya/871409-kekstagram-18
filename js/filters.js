@@ -1,13 +1,10 @@
 'use strict';
 (function () {
   var IMG_RANDOM_COUNT = 10;
-  var imgFilters = document.querySelector('.img-filters');
   var filtersForm = document.querySelector('.img-filters__form');
   var filterPopular = filtersForm.querySelector('#filter-popular');
   var filterRandom = filtersForm.querySelector('#filter-random');
   var filterDiscussed = filtersForm.querySelector('#filter-discussed');
-
-  imgFilters.classList.remove('img-filters--inactive');
 
   var filterButton = function (element) {
     filterPopular.classList.remove('img-filters__button--active');
@@ -42,8 +39,8 @@
       'filter-random': getRandomPhotos,
       'filter-discussed': getDiscussedPhotos
     };
-    var currentArray = filters[evt.target.id](window.picture.photos);
-    window.picture.renderPhotos(currentArray);
+    var currentArrays = filters[evt.target.id](window.picture.photos);
+    window.picture.renderPhotos(currentArrays);
     filterButton(evt.target);
   });
 

@@ -31,6 +31,7 @@
   var imgPreview = document.querySelector('.img-upload__preview').firstElementChild;
   var effectsList = document.querySelector('.effects__list');
   var effectLevel = document.querySelector('.effect-level');
+  var effectLevelValue = effectLevel.querySelector('.effect-level__value');
   var inputHashtags = document.querySelector('.text__hashtags');
   var textDescription = document.querySelector('.text__description');
   var effectPin = document.querySelector('.effect-level__pin');
@@ -50,6 +51,7 @@
 
   var openUpload = function () {
     uploadImage.classList.remove('hidden');
+    effectLevelValue.value = 0;
     document.addEventListener('keydown', popupEscPressHandler);
   };
 
@@ -67,7 +69,6 @@
     imgPreview.style.filter = 'none';
     inputHashtags.value = '';
     textDescription.value = '';
-
   };
 
   uploadLabel.addEventListener('change', function () {
@@ -101,7 +102,7 @@
     }
   };
 
-  var onSelectEffect = function (evt) {
+  var selectEffectHandler = function (evt) {
     var filtersName = evt.target.value;
     imgPreview.classList.remove('effects__preview--' + curretFilter);
     var makeEffect = effects[filtersName];
@@ -116,28 +117,34 @@
 
   var makeNoneEffect = function (target) {
     target.style.filter = '';
+    effectLevelValue.value = 0;
     hideEffectLine();
   };
 
   var makeChromeEffect = function (target, value) {
     target.style.filter = 'grayscale(' + value + ')';
+    effectLevelValue.value = value;
     showEffectLine();
   };
 
   var makeSepiaEffect = function (target, value) {
     target.style.filter = 'sepia(' + value + ')';
+    effectLevelValue.value = value;
     showEffectLine();
   };
   var makeMarvinEffect = function (target, value) {
     target.style.filter = 'invert(' + value * 100 + '%)';
+    effectLevelValue.value = value;
     showEffectLine();
   };
   var makePhobosEffect = function (target, value) {
     target.style.filter = 'blur(' + value * 30 + 'px)';
+    effectLevelValue.value = value;
     showEffectLine();
   };
   var makeHeatEffect = function (target, value) {
     target.style.filter = 'brightness(' + (1 + value * 2) + ')';
+    effectLevelValue.value = value;
     showEffectLine();
   };
 
@@ -150,7 +157,7 @@
     none: makeNoneEffect
   };
 
-  effectsList.addEventListener('change', onSelectEffect);
+  effectsList.addEventListener('change', selectEffectHandler);
 
   scaleSmallerButton.addEventListener('click', smallerButtonHandler);
   scaleBiggerButton.addEventListener('click', biggerButtonHandler);
