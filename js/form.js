@@ -3,6 +3,7 @@
   var MAX_HASHTAG_LENGTH = 20;
   var MAX_HASHTAG_COUNT = 5;
   var MAX_COMMENT_LENGTH = 140;
+  var PERCENTS = 100;
 
   var Scale = {
     COUNT: 25,
@@ -92,7 +93,7 @@
     var numValue = parseInt(scaleValue.value, 10);
     if (numValue - Scale.COUNT >= Scale.MIN) {
       scaleValue.value = '' + numValue - Scale.COUNT + '%';
-      imgPreview.style.transform = 'scale(' + (numValue - Scale.COUNT) / 100 + ')';
+      imgPreview.style.transform = 'scale(' + (numValue - Scale.COUNT) / PERCENTS + ')';
     }
   };
 
@@ -100,7 +101,7 @@
     var numValue = parseInt(scaleValue.value, 10);
     if (numValue + Scale.COUNT <= Scale.MAX) {
       scaleValue.value = numValue + Scale.COUNT + '%';
-      imgPreview.style.transform = 'scale(' + (numValue + Scale.COUNT) / 100 + ')';
+      imgPreview.style.transform = 'scale(' + (numValue + Scale.COUNT) / PERCENTS + ')';
     }
   };
 
@@ -119,34 +120,34 @@
 
   var makeNoneEffect = function (target) {
     target.style.filter = '';
-    effectLevelValue.value = 100;
+    effectLevelValue.value = PERCENTS;
     hideEffectLine();
   };
 
   var makeChromeEffect = function (target, value) {
     target.style.filter = 'grayscale(' + value + ')';
-    effectLevelValue.value = value * 100;
+    effectLevelValue.value = value * PERCENTS;
     showEffectLine();
   };
 
   var makeSepiaEffect = function (target, value) {
     target.style.filter = 'sepia(' + value + ')';
-    effectLevelValue.value = value * 100;
+    effectLevelValue.value = value * PERCENTS;
     showEffectLine();
   };
   var makeMarvinEffect = function (target, value) {
-    target.style.filter = 'invert(' + value * 100 + '%)';
-    effectLevelValue.value = value * 100;
+    target.style.filter = 'invert(' + value * PERCENTS + '%)';
+    effectLevelValue.value = value * PERCENTS;
     showEffectLine();
   };
   var makePhobosEffect = function (target, value) {
     target.style.filter = 'blur(' + value * 3 + 'px)';
-    effectLevelValue.value = value * 100;
+    effectLevelValue.value = value * PERCENTS;
     showEffectLine();
   };
   var makeHeatEffect = function (target, value) {
     target.style.filter = 'brightness(' + (1 + value * 2) + ')';
-    effectLevelValue.value = value * 100;
+    effectLevelValue.value = value * PERCENTS;
     showEffectLine();
   };
 
