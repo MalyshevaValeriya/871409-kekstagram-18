@@ -1,15 +1,12 @@
 'use strict';
 (function () {
   var IMG_RANDOM_COUNT = 10;
-  var imgFilters = document.querySelector('.img-filters');
   var filtersForm = document.querySelector('.img-filters__form');
   var filterPopular = filtersForm.querySelector('#filter-popular');
   var filterRandom = filtersForm.querySelector('#filter-random');
   var filterDiscussed = filtersForm.querySelector('#filter-discussed');
 
-  imgFilters.classList.remove('img-filters--inactive');
-
-  var filterButton = function (element) {
+  var showActiveFilter = function (element) {
     filterPopular.classList.remove('img-filters__button--active');
     filterRandom.classList.remove('img-filters__button--active');
     filterDiscussed.classList.remove('img-filters__button--active');
@@ -33,7 +30,7 @@
     return photos;
   };
 
-  var filterClickHandler = window.util.debounce(function (evt) {
+  var filterPhotos = window.util.debounce(function (evt) {
     if (!window.picture.photos) {
       return;
     }
@@ -42,13 +39,24 @@
       'filter-random': getRandomPhotos,
       'filter-discussed': getDiscussedPhotos
     };
-    var currentArray = filters[evt.target.id](window.picture.photos);
-    window.picture.renderPhotos(currentArray);
-    filterButton(evt.target);
+    var currentData = filters[evt.target.id](window.picture.photos);
+    window.picture.renderPhotos(currentData);
+    showActiveFilter(evt.target);
   });
 
-  filterRandom.addEventListener('click', filterClickHandler);
-  filterPopular.addEventListener('click', filterClickHandler);
-  filterDiscussed.addEventListener('click', filterClickHandler);
+  var randomFilterClickHandler = function (evt) {
+    filterPhotos(evt);
+  };
+
+  var popularFilterClickHandler = function (evt) {
+    filterPhotos(evt);
+  };
+
+  var discussedFilterClickHandler = function (evt) {
+    filterPhotos(evt);
+  };
+  filterRandom.addEventListener('click', randomFilterClickHandler);
+  filterPopular.addEventListener('click', popularFilterClickHandler);
+  filterDiscussed.addEventListener('click', discussedFilterClickHandler);
 })();
 

@@ -1,6 +1,7 @@
 'use strict';
 (function () {
   var photoAlbum = document.querySelector('.pictures.container');
+  var imgFilters = document.querySelector('.img-filters');
   var renderPhoto = function (photo, i) {
     var similarPhotoTemplate = document.querySelector('#picture').content.querySelector('.picture');
     var photoElement = similarPhotoTemplate.cloneNode(true);
@@ -42,6 +43,7 @@
     renderPhotos(data);
     window.picture.photos = data;
     window.picture.currentArray = data;
+    imgFilters.classList.remove('img-filters--inactive');
   };
 
   window.backend.load(onSuccess, onError);
