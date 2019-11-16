@@ -6,7 +6,7 @@
   var filterRandom = filtersForm.querySelector('#filter-random');
   var filterDiscussed = filtersForm.querySelector('#filter-discussed');
 
-  var filterButton = function (element) {
+  var showActiveFilter = function (element) {
     filterPopular.classList.remove('img-filters__button--active');
     filterRandom.classList.remove('img-filters__button--active');
     filterDiscussed.classList.remove('img-filters__button--active');
@@ -39,9 +39,9 @@
       'filter-random': getRandomPhotos,
       'filter-discussed': getDiscussedPhotos
     };
-    var currentArrays = filters[evt.target.id](window.picture.photos);
-    window.picture.renderPhotos(currentArrays);
-    filterButton(evt.target);
+    var currentData = filters[evt.target.id](window.picture.photos);
+    window.picture.renderPhotos(currentData);
+    showActiveFilter(evt.target);
   });
 
   filterRandom.addEventListener('click', filterClickHandler);
