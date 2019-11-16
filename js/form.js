@@ -65,6 +65,7 @@
   };
 
   var resetPhoto = function () {
+    effectsList.children[0].firstElementChild.checked = true;
     scaleValue.value = '100%';
     imgPreview.style.transform = '';
     imgPreview.style.filter = 'none';

@@ -30,7 +30,7 @@
     return photos;
   };
 
-  var filterClickHandler = window.util.debounce(function (evt) {
+  var filterPhotos = window.util.debounce(function (evt) {
     if (!window.picture.photos) {
       return;
     }
@@ -44,8 +44,19 @@
     showActiveFilter(evt.target);
   });
 
-  filterRandom.addEventListener('click', filterClickHandler);
-  filterPopular.addEventListener('click', filterClickHandler);
-  filterDiscussed.addEventListener('click', filterClickHandler);
+  var randomFilterClickHandler = function (evt) {
+    filterPhotos(evt);
+  };
+
+  var popularFilterClickHandler = function (evt) {
+    filterPhotos(evt);
+  };
+
+  var discussedFilterClickHandler = function (evt) {
+    filterPhotos(evt);
+  };
+  filterRandom.addEventListener('click', randomFilterClickHandler);
+  filterPopular.addEventListener('click', popularFilterClickHandler);
+  filterDiscussed.addEventListener('click', discussedFilterClickHandler);
 })();
 
